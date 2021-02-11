@@ -15,8 +15,8 @@ public class TodoController {
 
     @GetMapping("/")
     public String top(Model model) {
-        // model.addAttribute("title", "Todo List");
-        // model.addAttribute("message", "ここはTodoの一覧ページです");
+        model.addAttribute("title", "Todo List");
+        model.addAttribute("message", "ここはTodoの一覧ページです");
         return "top";
     }
 }
