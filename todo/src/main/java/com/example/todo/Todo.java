@@ -2,6 +2,7 @@ package com.example.todo;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 public class Todo {
@@ -16,10 +17,10 @@ public class Todo {
     private String content;
 
     @Column(nullable=false)
-    private LocalDateTime createdDateTime;
+    private Date createdDateTime;
 
     @Column(nullable=true)
-    private LocalDateTime updatedDateTime;
+    private Date updatedDateTime;
 
     @Column(nullable=false)
     private Boolean archived;
@@ -51,12 +52,20 @@ public class Todo {
         this.content = content;
     }
 
-    public LocalDateTime getCreatedDateTime() {
+    public Date getCreatedDateTime() {
         return createdDateTime;
     }
 
-    public LocalDateTime getUpdatedDateTime() {
+    public void setCreatedDateTime(Date createdDateTime) {
+        this.createdDateTime = createdDateTime;
+    }
+
+    public Date getUpdatedDateTime() {
         return updatedDateTime;
+    }
+
+    public void setUpdatedDateTime(Date updatedDateTime) {
+        this.updatedDateTime = updatedDateTime;
     }
 
     public Boolean getArchived() {

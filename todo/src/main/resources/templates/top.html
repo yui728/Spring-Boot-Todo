@@ -7,5 +7,15 @@
     <body>
         <h1 th:text="${title}"></h1>
         <p th:text="${message}"></p>
+        <table>
+            <tr>
+                <th>No.</th>
+                <th>タイトル</th>
+            </tr>
+            <tr th:each="todo,iterStat : ${todoList}">
+                <td th:text="${iterStat.count}"></td>
+                <td th:text="${todo.title}"></td>
+            </tr>
+        </table>
     </body>
 </html>
