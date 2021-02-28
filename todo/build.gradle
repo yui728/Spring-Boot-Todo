@@ -33,3 +33,7 @@ idea {
 		outputDir = file("$buildDir/classes/java/main")
 	}
 }
+
+bootRun {
+	sourceResources sourceSets.main
+}

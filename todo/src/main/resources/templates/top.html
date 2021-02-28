@@ -15,6 +15,7 @@
             <tr th:each="todo,iterStat : ${todoList}">
                 <td th:text="${iterStat.count}"></td>
                 <td th:text="${todo.title}"></td>
+                <td><a href="/todo/edit">編集</a></td>
             </tr>
         </table>
     </body>

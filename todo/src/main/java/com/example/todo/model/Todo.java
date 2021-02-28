@@ -1,4 +1,4 @@
-package com.example.todo;
+package com.example.todo.model;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

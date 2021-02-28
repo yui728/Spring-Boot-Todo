@@ -1,24 +1,30 @@
-package com.example.todo;
+package com.example.todo.contoller;
 
-import com.example.todo.TodoRepository;
+import com.example.todo.model.TodoRepository;
+import com.example.todo.model.Todo;
+import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/todo")
 public class TodoController {
     @Autowired
-    private TodoRepository todoRepository;
+    private TodoService todoService;
 
     @GetMapping("/")
     public String top(Model model) {
+        System.out.println("Start top Page.");
         model.addAttribute("title", "Todo List");
         model.addAttribute("message", "ここはTodoの一覧ページです");
         ArrayList<Todo> todoList = new ArrayList<>();
@@ -49,5 +55,39 @@ public class TodoController {
         model.addAttribute("todoList", todoList);
 
         return "top";
+    }
+
+    @GetMapping("/edit")
+    public String editTodo(@RequestParam(value = "id", defaultValue = "-1") Integer id, Model model) {
+        Optional<Todo> optionalTodo = todoService.findById(id);
+
+        System.out.println("isPresent? = " + optionalTodo.isPresent());
+        // 存在しないTodoの場合はトップページに遷移
+        if(!optionalTodo.isPresent()) {
+            System.out.println("Go top page.");
+            return "redirect:/todo/";
+        }
+
+        Todo todo = optionalTodo.get();
+
+        model.addAttribute("title", todo.getTitle());
+        model.addAttribute("content", todo.getContent());
+        model.addAttribute("createdDatetime", todo.getCreatedDateTime());
+        model.addAttribute("updatedDatetime", todo.getUpdatedDateTime());
+        model.addAttribute("archived", todo.getArchived());
+        model.addAttribute("completed", todo.getCompleted());
+        model.addAttribute("id", todo.getId());
+
+        return "editTodo";
+    }
+
+    @PostMapping("/edit")
+    public String updateTodoProcess() {
+        return "editTodo";
+    }
+
+    @GetMapping("/new")
+    public String registTodo() {
+        return "registTodo";
     }
 }
