@@ -70,15 +70,9 @@ public class TodoController {
 
         Todo todo = optionalTodo.get();
 
-        model.addAttribute("title", todo.getTitle());
-        model.addAttribute("content", todo.getContent());
-        model.addAttribute("createdDatetime", todo.getCreatedDateTime());
-        model.addAttribute("updatedDatetime", todo.getUpdatedDateTime());
-        model.addAttribute("archived", todo.getArchived());
-        model.addAttribute("completed", todo.getCompleted());
-        model.addAttribute("id", todo.getId());
+        model.addAttribute("todo", todo);
 
-        return "editTodo";
+        return "edit";
     }
 
     @PostMapping("/edit")

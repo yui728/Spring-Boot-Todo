@@ -5,8 +5,34 @@
     <title>Title</title>
 </head>
 <body>
-<form action="#" th:action="@{/update}">
-
+<h1>編集</h1>
+<p>このページではTodoを編集することができます。編集が完了したら「OK」ボタンをクリックしてください。</p>
+<form action="#" th:attr="action=@{/todo/update/}" method="post">
+    <table>
+        <tr>
+            <td>ID</td>
+            <td th:text="${todo.id}"></td>
+        </tr>
+        <tr>
+            <td>タイトル</td>
+            <td><input type="text" th:attr="value=${todo.title}"/></td>
+        </tr>
+        <tr>
+            <td>詳細</td>
+            <td><textarea cols="80" rows="5" th:text="${todo.content}"></textarea></td>
+        </tr>
+        <tr>
+            <td>完了</td>
+            <td><input type="checkbox" th:attr="value=${todo.completed}" /> </td>
+        </tr>
+        <tr>
+            <td>アーカイブ済</td>
+            <td><input type="checkbox" th:attr="value=${todo.archived}" /></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="OK" /></td>
+        </tr>
+    </table>
 </form>
 </body>
 </html>
