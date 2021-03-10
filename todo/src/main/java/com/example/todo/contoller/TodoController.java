@@ -77,11 +77,17 @@ public class TodoController {
 
     @PostMapping("/edit")
     public String updateTodoProcess() {
-        return "editTodo";
+
+         return "redirect:/todo/";
     }
 
     @GetMapping("/new")
-    public String registTodo() {
-        return "registTodo";
+    public String registerTodo() {
+        return "register";
+    }
+
+    @PostMapping("/new")
+    public String registerTodoProcess() {
+        return "redirect:/todo/";
     }
 }

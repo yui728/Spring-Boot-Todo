@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>新規作成</title>
+</head>
+<body>
+<h1>新規作成</h1>
+<p>Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
+<table>
+    <tr>
+        <td>タイトル</td>
+        <td><input type="text" name="title" maxlength="50" /></td>
+    </tr>
+    <tr>
+        <td>詳細</td>
+        <td><textarea cols="80" rows="7" maxlength="500" name="content"></textarea></td>
+    </tr>
+    <tr>
+        <td colspan=""><input type="submit" value="OK" /></td>
+    </tr>
+</table>
+</body>
+</html>
