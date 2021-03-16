@@ -7,6 +7,7 @@
 <body>
 <h1>新規作成</h1>
 <p>Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
+<form action="#" th:action="@{/todo/new/}" method="post">
 <table>
     <tr>
         <td>タイトル</td>
@@ -20,5 +21,6 @@
         <td colspan=""><input type="submit" value="OK" /></td>
     </tr>
 </table>
+</form>
 </body>
 </html>

@@ -7,7 +7,7 @@
 <body>
 <h1>編集</h1>
 <p>このページではTodoを編集することができます。編集が完了したら「OK」ボタンをクリックしてください。</p>
-<form action="#" th:attr="action=@{/todo/update/}" method="post">
+<form action="#" th:action="@{/todo/update/}" method="post">
     <table>
         <tr>
             <td>ID</td>
@@ -23,11 +23,11 @@
         </tr>
         <tr>
             <td>完了</td>
-            <td><input type="checkbox" th:attr="value=${todo.completed}" /> </td>
+            <td><input type="checkbox" th:checked="${todo.completed}" /> </td>
         </tr>
         <tr>
             <td>アーカイブ済</td>
-            <td><input type="checkbox" th:attr="value=${todo.archived}" /></td>
+            <td><input type="checkbox" th:checked="${todo.archived}" /></td>
         </tr>
         <tr>
             <td colspan="2"><input type="submit" value="OK" /></td>
