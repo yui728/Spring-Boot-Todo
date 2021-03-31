@@ -5,16 +5,17 @@ services:
     db:
       image: mysql:8.0
       container_name: mysql_host
+      restart: always
       environment:
         MYSQL_ROOT_PASSWORD: root
-        MYSQL_DATABASE: todo
+        MYSQL_DATABASE: app
         MYSQL_USER: docker
         MYSQL_PASSWORD: docker
         TZ: 'Asia/Tokyo'
-      command: mysqld --charactor-set-server=utf8mb4 --collection-server=utf8mb4_unicode_ci
+      command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
       volumes:
-      - ./docker/db/data:/var/lib/mysql
-      - ./docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
-      - ./docker/db/sql:/docker-endpoint-initdb.d
+      - ./db/data:/var/lib/mysql
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./db/sql:/docker-endpoint-initdb.d
       ports:
       - 3306:3306
