@@ -6,11 +6,13 @@ import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.validation.Valid;
 import java.time.*;
 import java.util.ArrayList;
 import java.util.Date;
@@ -27,31 +29,7 @@ public class TodoController {
         System.out.println("Start top Page.");
         model.addAttribute("title", "Todo List");
         model.addAttribute("message", "ここはTodoの一覧ページです");
-        ArrayList<Todo> todoList = new ArrayList<>();
-        int todoCount = 3;
-        for(int i = 0; i < todoCount; i++) {
-            Todo todo = new Todo();
-            todo.setId(i + 1);
-            todo.setTitle("Todo " + (i + 1));
-            todo.setContent("Todo " + (i + 1) + " content");
-            todo.setArchived(false);
-            todo.setCompleted(false);
-
-            ZoneId zoneId = ZoneId.systemDefault();
-            LocalDateTime createdDatetimeBase = LocalDateTime.now().minusDays((i + 2));
-            ZonedDateTime createdDatetimeZoned = ZonedDateTime.of(createdDatetimeBase, zoneId);
-            Instant createdDatetimeInstant = createdDatetimeZoned.toInstant();
-            Date createdDatetime = Date.from(createdDatetimeInstant);
-
-            LocalDateTime updatedDatetimeBase = LocalDateTime.now().minusMinutes(30 + (i * 10));
-            ZonedDateTime updatedDatetimeZoned = ZonedDateTime.of(updatedDatetimeBase, zoneId);
-            Instant updatedDatetimeInstant = updatedDatetimeZoned.toInstant();
-            Date updatedDatetime = Date.from(updatedDatetimeInstant);
-
-            todo.setCreatedDateTime(createdDatetime);
-            todo.setUpdatedDateTime(updatedDatetime);
-            todoList.add(todo);
-        }
+        Iterable<Todo> todoList = todoService.findAll();
         model.addAttribute("todoList", todoList);
 
         return "top";
@@ -69,20 +47,30 @@ public class TodoController {
         }
 
         Todo todo = optionalTodo.get();
+        TodoEditForm todoForm = new TodoEditForm();
 
-        model.addAttribute("todo", todo);
+        todoForm.setTitle(todo.getTitle());
+        todoForm.setContent(todo.getContent());
+        todoForm.setArchived(todo.getArchived());
+        todoForm.setCompleted(todo.getCompleted());
+        todoForm.setId(todo.getId());
 
+        model.addAttribute("todoForm", todoForm);
         return "edit";
     }
 
     @PostMapping("/edit")
-    public String updateTodoProcess() {
-
+    public String updateTodoProcess(@Valid TodoEditForm todoForm, BindingResult bindingResult, Model model) {
+         if(bindingResult.hasErrors()) {
+             System.out.println("edit Validation Error: " + bindingResult.getFieldError());
+             model.addAttribute("todoForm", todoForm);
+             return "edit";
+         }
          return "redirect:/todo/";
     }
 
     @GetMapping("/new")
-    public String registerTodo() {
+    public String registerTodo(TodoForm todoForm) {
         return "register";
     }
 

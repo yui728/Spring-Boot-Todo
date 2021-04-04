@@ -7,30 +7,32 @@
 <body>
 <h1>編集</h1>
 <p>このページではTodoを編集することができます。編集が完了したら「OK」ボタンをクリックしてください。</p>
-<form action="#" th:action="@{/todo/update/}" method="post">
+<form action="#" th:action="@{/todo/edit/}" th:object="${todoForm}" method="post">
     <table>
         <tr>
             <td>ID</td>
-            <td th:text="${todo.id}"></td>
+            <td th:text="${id}">
+                <input type="hidden" th:field="*{id}" />
+            </td>
         </tr>
         <tr>
             <td>タイトル</td>
-            <td><input type="text" th:attr="value=${todo.title}"/></td>
+            <td><input type="text" th:field="*{title}" /></td>
         </tr>
         <tr>
             <td>詳細</td>
-            <td><textarea cols="80" rows="7" th:text="${todo.content}"></textarea></td>
+            <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
         </tr>
         <tr>
             <td>完了</td>
-            <td><input type="checkbox" th:checked="${todo.completed}" /> </td>
+            <td><input type="checkbox" th:field="*{completed}" /> </td>
         </tr>
         <tr>
             <td>アーカイブ済</td>
-            <td><input type="checkbox" th:checked="${todo.archived}" /></td>
+            <td><input type="checkbox" th:field="*{archived}" /></td>
         </tr>
         <tr>
-            <td colspan="2"><input type="submit" value="OK" /></td>
+            <td colspan="2"><button type="submit">OK</button></td>
         </tr>
     </table>
 </form>
