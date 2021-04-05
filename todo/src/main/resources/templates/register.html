@@ -7,6 +7,7 @@
 <body>
 <h1>新規作成</h1>
 <p>Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
+<p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
 <form action="#" th:action="@{/todo/new/}" method="post">
 <table>
     <tr>
@@ -22,5 +23,6 @@
     </tr>
 </table>
 </form>
+<p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
 </body>
 </html>
