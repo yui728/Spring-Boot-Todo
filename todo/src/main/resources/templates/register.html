@@ -8,15 +8,15 @@
 <h1>新規作成</h1>
 <p>Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
 <p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
-<form action="#" th:action="@{/todo/new/}" method="post">
+<form action="#" th:action="@{/todo/new/}" th:object="${todoForm}" method="post">
 <table>
     <tr>
         <td>タイトル</td>
-        <td><input type="text" name="title" maxlength="50" /></td>
+        <td><input type="text" th:field="*{title}" /></td>
     </tr>
     <tr>
         <td>詳細</td>
-        <td><textarea cols="80" rows="7" maxlength="500" name="content"></textarea></td>
+        <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
     </tr>
     <tr>
         <td colspan=""><input type="submit" value="OK" /></td>

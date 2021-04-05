@@ -12,12 +12,6 @@ public class TodoForm {
     @Size(min=1, max=500)
     private String content;
 
-    @NotNull
-    private Boolean completed;
-
-    @NotNull
-    private Boolean archived;
-
     public String getTitle() {
         return this.title;
     }
@@ -32,21 +26,5 @@ public class TodoForm {
 
     public void setContent(String content) {
         this.content = content;
-    }
-
-    public Boolean getCompleted() {
-        return this.completed;
-    }
-
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
-    }
-
-    public Boolean getArchived() {
-        return this.archived;
-    }
-
-    public void setArchived(Boolean archived) {
-        this.archived = archived;
     }
 }
