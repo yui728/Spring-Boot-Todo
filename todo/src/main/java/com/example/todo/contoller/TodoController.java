@@ -55,6 +55,8 @@ public class TodoController {
         todoForm.setCompleted(todo.getCompleted());
         todoForm.setId(todo.getId());
 
+        System.out.println(todoForm.toString());
+
         model.addAttribute("todoForm", todoForm);
         return "edit";
     }
@@ -63,7 +65,6 @@ public class TodoController {
     public String updateTodoProcess(@Valid TodoEditForm todoForm, BindingResult bindingResult, Model model) {
          if(bindingResult.hasErrors()) {
              System.out.println("edit Validation Error: " + bindingResult.getFieldError());
-             model.addAttribute("todoForm", todoForm);
              return "edit";
          }
          return "redirect:/todo/";
@@ -75,10 +76,9 @@ public class TodoController {
     }
 
     @PostMapping("/new")
-    public String registerTodoProcess(@Valid TodoForm todoFrom, BindingResult bindingResult, Model model) {
+    public String registerTodoProcess(@Valid TodoForm todoFrom, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
           System.out.println("registration Validation Error: " + bindingResult.getFieldError());
-          model.addAttribute("todoForm", todoFrom);
           return "register";
         }
         return "redirect:/todo/";

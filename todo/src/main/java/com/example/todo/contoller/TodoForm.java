@@ -27,4 +27,11 @@ public class TodoForm {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString(){
+        return "TodoForm:"
+                + " title = " + this.getTitle()
+                + " content" + this.getTitle();
+    }
 }

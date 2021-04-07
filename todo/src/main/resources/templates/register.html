@@ -13,10 +13,12 @@
     <tr>
         <td>タイトル</td>
         <td><input type="text" th:field="*{title}" /></td>
+        <td th:if="${#fields.hasErrors('title')}" th:errors="*{title}">タイトルの入力に誤りがあります</td>
     </tr>
     <tr>
         <td>詳細</td>
         <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
+        <td th:if="${#fields.hasErrors('content')}" th:errors="*{content}">詳細の入力に誤りがあります</td>
     </tr>
     <tr>
         <td colspan=""><input type="submit" value="OK" /></td>

@@ -39,4 +39,14 @@ public class TodoEditForm extends TodoForm{
     public void setArchived(Boolean archived) {
         this.archived = archived;
     }
+
+    @Override
+    public String toString() {
+        return "TodoEditForm:"
+                + " ID = " + this.getId()
+                + " title = " + this.getTitle()
+                + " content = " + this.getContent()
+                + " completed = " + this.getCompleted()
+                + " archived = " + this.getArchived();
+    }
 }
