@@ -7,10 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.time.*;
@@ -35,8 +32,8 @@ public class TodoController {
         return "top";
     }
 
-    @GetMapping("/edit")
-    public String editTodo(@RequestParam(value = "id", defaultValue = "-1") Integer id, Model model) {
+    @GetMapping("/edit/{id}")
+    public String editTodo(@PathVariable Integer id, Model model) {
         Optional<Todo> optionalTodo = todoService.findById(id);
 
         System.out.println("isPresent? = " + optionalTodo.isPresent());
@@ -58,13 +55,13 @@ public class TodoController {
         System.out.println(todoForm.toString());
 
         model.addAttribute("todoForm", todoForm);
+
         return "edit";
     }
 
     @PostMapping("/edit")
-    public String updateTodoProcess(@Valid TodoEditForm todoForm, BindingResult bindingResult, Model model) {
+    public String updateTodoProcess(@Valid @ModelAttribute("todoForm") TodoEditForm todoForm, BindingResult bindingResult, Model model) {
          if(bindingResult.hasErrors()) {
-             System.out.println("edit Validation Error: " + bindingResult.getFieldError());
              return "edit";
          }
          return "redirect:/todo/";
@@ -78,7 +75,7 @@ public class TodoController {
     @PostMapping("/new")
     public String registerTodoProcess(@Valid TodoForm todoFrom, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-          System.out.println("registration Validation Error: " + bindingResult.getFieldError());
+//          System.out.println("registration Validation Error: " + bindingResult.getFieldError());
           return "register";
         }
         return "redirect:/todo/";

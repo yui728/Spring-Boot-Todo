@@ -9,20 +9,22 @@
 <p>このページではTodoを編集することができます。編集が完了したら「OK」ボタンをクリックしてください。</p>
 <p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
 <form action="#" th:action="@{/todo/edit/}" th:object="${todoForm}" method="post">
+    <input type="hidden" th:value="${todoForm.id}" th:attr="name='id'" />
     <table>
         <tr>
             <td>ID</td>
-            <td th:text="${id}">
-                <input type="hidden" th:field="*{id}" />
+            <td th:text="${todoForm.id}">
             </td>
         </tr>
         <tr>
             <td>タイトル</td>
             <td><input type="text" th:field="*{title}" /></td>
+            <td th:if="${#fields.hasErrors('title')}" th:errors="*{title}">タイトルの入力に誤りがあります</td>
         </tr>
         <tr>
             <td>詳細</td>
             <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
+            <td th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></td>
         </tr>
         <tr>
             <td>完了</td>

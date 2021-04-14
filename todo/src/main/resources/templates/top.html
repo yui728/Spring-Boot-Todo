@@ -16,7 +16,7 @@
             <tr th:each="todo,iterStat : ${todoList}">
                 <td th:text="${iterStat.count}"></td>
                 <td th:text="${todo.title}"></td>
-                <td><a href="/todo/edit" data-th-href="@{/todo/edit/(id=${todo.id})}">編集</a></td>
+                <td><a href="/todo/edit" data-th-href="@{/todo/edit/{id}/(id=${todo.id})}">編集</a></td>
             </tr>
         </table>
     </body>
