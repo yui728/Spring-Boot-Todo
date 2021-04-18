@@ -1,6 +1,5 @@
 package com.example.todo.contoller;
 
-import com.example.todo.model.TodoRepository;
 import com.example.todo.model.Todo;
 import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +9,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.*;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.Optional;
 
 @Controller
@@ -62,6 +58,7 @@ public class TodoController {
     @PostMapping("/edit")
     public String updateTodoProcess(@Valid @ModelAttribute("todoForm") TodoEditForm todoForm, BindingResult bindingResult, Model model) {
          if(bindingResult.hasErrors()) {
+             System.out.println("Model has todoForm? " + model.containsAttribute("todoFrom"));
              return "edit";
          }
          return "redirect:/todo/";
@@ -78,6 +75,7 @@ public class TodoController {
 //          System.out.println("registration Validation Error: " + bindingResult.getFieldError());
           return "register";
         }
+        todoService.registration(todoFrom);
         return "redirect:/todo/";
     }
 }
