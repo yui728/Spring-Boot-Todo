@@ -1,5 +1,7 @@
 package com.example.todo.service;
 
+import com.example.todo.NotFoundException;
+import com.example.todo.contoller.TodoEditForm;
 import com.example.todo.contoller.TodoForm;
 import com.example.todo.model.Todo;
 import com.example.todo.model.TodoRepository;
@@ -22,7 +24,7 @@ public class TodoService {
         return this.repository.findById(id);
     }
 
-    public Optional<Todo> registration(TodoForm form) {
+    public Todo registration(TodoForm form) {
         Todo todo = new Todo();
         todo.setTitle(form.getTitle());
         todo.setContent(form.getContent());
@@ -30,8 +32,31 @@ public class TodoService {
         todo.setCompleted(false);
         todo.setCreatedDateTime(new Date());
         todo.setUpdatedDateTime(new Date());
-        Optional<Todo> result = Optional.of(repository.save(todo));
 
-        return result;
+        return repository.save(todo);
+    }
+
+    public Todo update(TodoEditForm form) throws NotFoundException {
+        Optional<Todo> todoData = repository.findById(form.getId());
+
+        if(!todoData.isPresent()) {
+            throw new NotFoundException();
+        }
+
+        Todo updateData = todoData.get();
+
+        updateData.setTitle(form.getTitle());
+        updateData.setContent(form.getContent());
+        updateData.setArchived(form.getArchived());
+        updateData.setCompleted(form.getCompleted());
+        updateData.setUpdatedDateTime(new Date());
+
+        return repository.save(updateData);
+    }
+
+    public boolean existTodo(Integer id) {
+        Optional<Todo> existData = repository.findById(id);
+
+        return existData.isPresent();
     }
 }

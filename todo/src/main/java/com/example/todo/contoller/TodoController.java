@@ -1,11 +1,13 @@
 package com.example.todo.contoller;
 
+import com.example.todo.NotFoundException;
 import com.example.todo.model.Todo;
 import com.example.todo.service.TodoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -59,6 +61,17 @@ public class TodoController {
     public String updateTodoProcess(@Valid @ModelAttribute("todoForm") TodoEditForm todoForm, BindingResult bindingResult, Model model) {
          if(bindingResult.hasErrors()) {
              System.out.println("Model has todoForm? " + model.containsAttribute("todoFrom"));
+             return "edit";
+         }
+         try {
+             boolean isExist = todoService.existTodo(todoForm.getId());
+             if(!isExist) {
+                 model.addAttribute("message", "更新対象のTodoが存在しません。");
+                 return "edit";
+             }
+             todoService.update(todoForm);
+         } catch(NotFoundException ex) {
+             model.addAttribute("message", "更新対象のTodoが存在しません。");
              return "edit";
          }
          return "redirect:/todo/";
