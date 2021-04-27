@@ -61,21 +61,43 @@ public class TodoService {
         return existData.isPresent();
     }
 
+    /**
+     * Todoをアーカイブする
+     * @param id アーカイブするTodo
+     */
     public void archiveTodo(Integer id) {
+        setArchiveTodo(id, true);
+    }
+
+    /**
+     * アーカイブを解除する
+     * @param id アーカイブを解除したいTodoのID
+     */
+    public void unarchiveTodo(Integer id) {
+        setArchiveTodo(id, false);
+    }
+
+    /**
+     * アーカイブフラグの更新処理
+     * @param id アーカイブ対象のTodoのID
+     * @param archived アーカイブフラグ
+     */
+    private void setArchiveTodo(Integer id, boolean archived) {
         Optional<Todo> todoData = repository.findById(id);
-        
+
         if(!todoData.isPresent()) {
             return;
         }
-        
+
         Todo todo = todoData.get();
 
-        if(todo.getArchived()) {
+        if(todo.getArchived() == archived) {
             return;
         }
 
-        todo.setArchived(true);
+        todo.setArchived(archived);
         todo.setUpdatedDateTime(new Date());
         repository.save(todo);
+
     }
 }

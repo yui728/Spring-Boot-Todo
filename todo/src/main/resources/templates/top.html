@@ -20,10 +20,15 @@
                 <td th:text="${todo.title}"></td>
                 <td th:text="${todo.completed}? '完了' : '未完了'"></td>
                 <td th:text="${todo.archived}? '済' : ''"></td>
-                <td><a href="/todo/edit" data-th-href="@{/todo/edit/{id}/(id=${todo.id})}">編集</a></td>
-                <td>
+                <td th:unless="${todo.archived}"><a href="/todo/edit" data-th-href="@{/todo/edit/{id}/(id=${todo.id})}">編集</a></td>
+                <td th:unless="${todo.archived}">
                     <button th:form="|archive-form-${todo.id}|" type="submit">アーカイブ</button>
                     <form method="post" action="#" th:action="@{/todo/archive/{id}/(id=${todo.id})}" th:id="|archive-form-${todo.id}|">
+                    </form>
+                </td>
+                <td th:if="${todo.archived}">
+                    <button th:form="|unarchive-form-${todo.id}|" type="submit">アーカイブ解除</button>
+                    <form method="post" action="#" th:action="@{/todo/unarchive/{id}/(id=${todo.id})}" th:id="|unarchive-form-${todo.id}|">
                     </form>
                 </td>
             </tr>

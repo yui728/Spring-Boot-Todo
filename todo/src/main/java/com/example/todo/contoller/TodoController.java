@@ -98,4 +98,11 @@ public class TodoController {
 
         return "redirect:/todo/";
     }
+
+    @PostMapping("/unarchive/{id}/")
+    public String unarchiveTodoProcess(@PathVariable Integer id, Model model) {
+        todoService.unarchiveTodo(id);
+
+        return "redirect:/todo/";
+    }
 }
