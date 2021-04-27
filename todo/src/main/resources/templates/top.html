@@ -12,11 +12,20 @@
             <tr>
                 <th>No.</th>
                 <th>タイトル</th>
+                <th>完了</th>
+                <th>アーカイブ</th>
             </tr>
             <tr th:each="todo,iterStat : ${todoList}">
                 <td th:text="${iterStat.count}"></td>
                 <td th:text="${todo.title}"></td>
+                <td th:text="${todo.completed}? '完了' : '未完了'"></td>
+                <td th:text="${todo.archived}? '済' : ''"></td>
                 <td><a href="/todo/edit" data-th-href="@{/todo/edit/{id}/(id=${todo.id})}">編集</a></td>
+                <td>
+                    <button th:form="|archive-form-${todo.id}|" type="submit">アーカイブ</button>
+                    <form method="post" action="#" th:action="@{/todo/archive/{id}/(id=${todo.id})}" th:id="|archive-form-${todo.id}|">
+                    </form>
+                </td>
             </tr>
         </table>
     </body>

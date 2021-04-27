@@ -8,6 +8,7 @@ import com.example.todo.model.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.Date;
 import java.util.Optional;
 
@@ -58,5 +59,23 @@ public class TodoService {
         Optional<Todo> existData = repository.findById(id);
 
         return existData.isPresent();
+    }
+
+    public void archiveTodo(Integer id) {
+        Optional<Todo> todoData = repository.findById(id);
+        
+        if(!todoData.isPresent()) {
+            return;
+        }
+        
+        Todo todo = todoData.get();
+
+        if(todo.getArchived()) {
+            return;
+        }
+
+        todo.setArchived(true);
+        todo.setUpdatedDateTime(new Date());
+        repository.save(todo);
     }
 }

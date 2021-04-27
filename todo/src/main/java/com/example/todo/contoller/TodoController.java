@@ -85,10 +85,17 @@ public class TodoController {
     @PostMapping("/new")
     public String registerTodoProcess(@Valid TodoForm todoFrom, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-//          System.out.println("registration Validation Error: " + bindingResult.getFieldError());
+          System.out.println("registration Validation Error: " + bindingResult.getFieldError());
           return "register";
         }
         todoService.registration(todoFrom);
+        return "redirect:/todo/";
+    }
+
+    @PostMapping("/archive/{id}/")
+    public String archiveTodoProcess(@PathVariable Integer id, Model model) {
+        todoService.archiveTodo(id);
+
         return "redirect:/todo/";
     }
 }
