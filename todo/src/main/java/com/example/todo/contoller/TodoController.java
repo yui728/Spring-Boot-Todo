@@ -49,6 +49,8 @@ public class TodoController {
         todoForm.setArchived(todo.getArchived());
         todoForm.setCompleted(todo.getCompleted());
         todoForm.setId(todo.getId());
+        todoForm.setCreatedDateTime(todo.getCreatedDateTime());
+        todoForm.setUpdatedDateTime(todo.getUpdatedDateTime());
 
         System.out.println(todoForm.toString());
 
@@ -102,6 +104,13 @@ public class TodoController {
     @PostMapping("/unarchive/{id}/")
     public String unarchiveTodoProcess(@PathVariable Integer id, Model model) {
         todoService.unarchiveTodo(id);
+
+        return "redirect:/todo/";
+    }
+
+    @PostMapping("/delete/{id}/")
+    public String deleteTodoProcess(@PathVariable Integer id, Model model) {
+        todoService.deleteTodo(id);
 
         return "redirect:/todo/";
     }

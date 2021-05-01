@@ -78,6 +78,14 @@ public class TodoService {
     }
 
     /**
+     * Todoを削除する
+     * @param id 削除するTodoのID
+     */
+    public void deleteTodo(Integer id) {
+        repository.deleteById(id);
+    }
+
+    /**
      * アーカイブフラグの更新処理
      * @param id アーカイブ対象のTodoのID
      * @param archived アーカイブフラグ

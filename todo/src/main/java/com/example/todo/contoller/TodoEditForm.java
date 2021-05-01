@@ -3,6 +3,7 @@ package com.example.todo.contoller;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 public class TodoEditForm extends TodoForm{
     @NotNull
@@ -15,6 +16,10 @@ public class TodoEditForm extends TodoForm{
 
     @NotNull
     private Boolean archived;
+
+    private Date createdDateTime;
+
+    private Date updatedDateTime;
 
     public void setId(Integer id) {
         this.id = id;
@@ -39,6 +44,14 @@ public class TodoEditForm extends TodoForm{
     public void setArchived(Boolean archived) {
         this.archived = archived;
     }
+
+    public void setCreatedDateTime(Date createdDateTime) { this.createdDateTime = createdDateTime; }
+
+    public Date getCreatedDateTime() { return this.createdDateTime; }
+
+    public void setUpdatedDateTime(Date updatedDateTime) { this.updatedDateTime = updatedDateTime; }
+
+    public Date getUpdatedDateTime() { return this.updatedDateTime; }
 
     @Override
     public String toString() {

@@ -28,6 +28,14 @@
             <td th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></td>
         </tr>
         <tr>
+            <td>作成日時</td>
+            <td th:text="${#dates.format(todoForm.createdDateTime, 'yyyy/MM/dd HH:mm')}"></td>
+        </tr>
+        <tr>
+            <td>更新日時</td>
+            <td th:text="${#dates.format(todoForm.updatedDateTime, 'yyyy/MM/dd HH:mm')}"></td>
+        </tr>
+        <tr>
             <td>完了</td>
             <td><input type="checkbox" th:field="*{completed}" /> </td>
         </tr>
