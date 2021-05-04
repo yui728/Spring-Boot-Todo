@@ -2,41 +2,41 @@
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
         <meta charset="UTF-8" />
-        <title th:text="${title}"></title>
+        <title th:text="#{todoapp.title}"></title>
     </head>
     <body>
-        <h1 th:text="${title}"></h1>
-        <p th:text="${message}"></p>
-        <p><a data-th-href="@{/todo/new/}">新しいTodoを作成する</a></p>
+        <h1 th:text="#{todoapp.top.title}">Todo List</h1>
+        <p th:text="#{todoapp.top.message(#{todo.new.link})}"></p>
+        <p><a th:href="@{/todo/new/}" th:text="#{todo.new.link}">新しいTodoを作成する</a></p>
         <table>
             <tr>
-                <th>No.</th>
-                <th>タイトル</th>
-                <th>作成日時</th>
-                <th>更新日時</th>
-                <th>完了</th>
-                <th>アーカイブ</th>
+                <th th:text="#{todo.list.Number}">No.</th>
+                <th th:text="#{todo.field.title.name}">名前</th>
+                <th th:text="#{todo.field.createdDateTime.name}">作成日時</th>
+                <th th:text="#{todo.field.updatedDateTime.name}">更新日時</th>
+                <th th:text="#{todo.field.completed.name}">完了</th>
+                <th th:text="#{todo.field.archived.name}">アーカイブ</th>
             </tr>
             <tr th:each="todo,iterStat : ${todoList}">
                 <td th:text="${iterStat.count}"></td>
                 <td th:text="${todo.title}"></td>
                 <td th:text="${#dates.format(todo.createdDateTime, 'yyyy/MM/dd HH:mm')}"></td>
                 <td th:text="${#dates.format(todo.updatedDateTime, 'yyyy/MM/dd HH:mm')}"></td>
-                <td th:text="${todo.completed}? '完了' : '未完了'"></td>
-                <td th:text="${todo.archived}? '済' : ''"></td>
-                <td th:unless="${todo.archived}"><a href="/todo/edit" data-th-href="@{/todo/edit/{id}/(id=${todo.id})}">編集</a></td>
+                <td th:text="${todo.completed}? #{todo.completed} : #{todo.incomplete}"></td>
+                <td th:text="${todo.archived}? #{todo.archived} : ''"></td>
+                <td th:unless="${todo.archived}"><a href="/todo/edit" th:href="@{/todo/edit/{id}/(id=${todo.id})}" th:text="#{todo.edit.link}">編集</a></td>
                 <td th:unless="${todo.archived}">
-                    <button th:form="|archive-form-${todo.id}|" type="submit">アーカイブ</button>
+                    <button th:form="|archive-form-${todo.id}|" th:text="#{todo.archive.button}" type="submit">アーカイブ</button>
                     <form method="post" action="#" th:action="@{/todo/archive/{id}/(id=${todo.id})}" th:id="|archive-form-${todo.id}|">
                     </form>
                 </td>
                 <td th:if="${todo.archived}">
-                    <button th:form="|unarchive-form-${todo.id}|" type="submit">アーカイブ解除</button>
+                    <button th:form="|unarchive-form-${todo.id}|" th:text="#{todo.unarchive.button}" type="submit">アーカイブ解除</button>
                     <form method="post" action="#" th:action="@{/todo/unarchive/{id}/(id=${todo.id})}" th:id="|unarchive-form-${todo.id}|">
                     </form>
                 </td>
                 <td th:if="${todo.archived}">
-                    <button th:form="|delete-form-${todo.id}|" type="submit">削除</button>
+                    <button th:form="|delete-form-${todo.id}|" th:text="#{todo.delete.button}" type="submit">削除</button>
                     <form method="post" action="#" th:action="@{/todo/delete/{id}/(id=${todo.id})}" th:id="|delete-form-${todo.id}|">
                     </form>
                 </td>

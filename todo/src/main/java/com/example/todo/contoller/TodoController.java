@@ -22,8 +22,6 @@ public class TodoController {
     @GetMapping("/")
     public String top(Model model) {
         System.out.println("Start top Page.");
-        model.addAttribute("title", "Todo List");
-        model.addAttribute("message", "ここはTodoの一覧ページです");
         Iterable<Todo> todoList = todoService.findAll();
         model.addAttribute("todoList", todoList);
 
