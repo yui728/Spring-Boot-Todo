@@ -2,29 +2,29 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>新規作成</title>
+    <title th:text="#{todoapp.title}"></title>
 </head>
 <body>
-<h1>新規作成</h1>
-<p>Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
-<p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
+<h1 th:text="#{todoapp.register.title}">新規作成</h1>
+<p th:text="#{todoapp.register.message(#{todo.ok.button})}">Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
+<p><a href="/todo/edit" data-th-href="@{/todo/}" th:text="#{todo.link.top}" >一覧に戻る</a></p>
 <form action="#" th:action="@{/todo/new/}" th:object="${todoForm}" method="post">
 <table>
     <tr>
-        <td>タイトル</td>
+        <td th:text="#{todo.field.title.name}">タイトル</td>
         <td><input type="text" th:field="*{title}" /></td>
         <td th:if="${#fields.hasErrors('title')}" th:errors="*{title}">タイトルの入力に誤りがあります</td>
     </tr>
     <tr>
-        <td>詳細</td>
+        <td th:text="#{todo.field.content.name}">詳細</td>
         <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
         <td th:if="${#fields.hasErrors('content')}" th:errors="*{content}">詳細の入力に誤りがあります</td>
     </tr>
     <tr>
-        <td colspan=""><input type="submit" value="OK" /></td>
+        <td colspan=""><input type="submit" value="OK" th:value="#{todo.ok.button}"/></td>
     </tr>
 </table>
 </form>
-<p><a href="/todo/edit" data-th-href="@{/todo/}">一覧に戻る</a></p>
+<p><a href="/todo/edit" data-th-href="@{/todo/}" th:text="#{todo.link.top}">一覧に戻る</a></p>
 </body>
 </html>
