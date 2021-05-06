@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{todoapp.title}"></title>
-</head>
+<head th:replace="head :: head"></head>
 <body>
 <h1 th:text="#{todoapp.edit.title}">編集</h1>
 <p th:text="#{todoapp.edit.message(#{todo.ok.button})}">このページではTodoを編集することができます。編集が完了したら「OK」ボタンをクリックしてください。</p>
-<p><a href="/todo/edit" th:href="@{/todo/}" th:text="#{todo.top.link}">一覧に戻る</a></p>
+<div th:replace="link :: link-top"></div>
 <form action="#" th:action="@{/todo/edit/}" th:object="${todoForm}" method="post">
     <input type="hidden" th:value="${todoForm.id}" th:attr="name='id'" />
     <table>
@@ -47,6 +44,6 @@
         </tr>
     </table>
 </form>
-<p><a href="/todo/edit" th:href="@{/todo/}" th:text="#{todo.top.link}">一覧に戻る</a></p>
+<div th:replace="link :: link-top"></div>
 </body>
 </html>

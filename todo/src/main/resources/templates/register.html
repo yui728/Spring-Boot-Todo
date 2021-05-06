@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title th:text="#{todoapp.title}"></title>
-</head>
+<head th:replace="head :: head"></head>
 <body>
 <h1 th:text="#{todoapp.register.title}">新規作成</h1>
 <p th:text="#{todoapp.register.message(#{todo.ok.button})}">Todoを新規作成します。必要な項目の入力が完了したら、「OK」ボタンをクリックしてください。</p>
-<p><a href="/todo/edit" data-th-href="@{/todo/}" th:text="#{todo.top.link}" >一覧に戻る</a></p>
+<div th:replace="link :: link-top"></div>
 <form action="#" th:action="@{/todo/new/}" th:object="${todoForm}" method="post">
 <table>
     <tr>
@@ -25,6 +22,6 @@
     </tr>
 </table>
 </form>
-<p><a href="/todo/edit" data-th-href="@{/todo/}" th:text="#{todo.top.link}">一覧に戻る</a></p>
+<div th:replace="link :: link-top"></div>
 </body>
 </html>
