@@ -9,34 +9,34 @@
     <input type="hidden" th:value="${todoForm.id}" th:attr="name='id'" />
     <table>
         <tr>
-            <td th:text="#{todo.field.id.name}">ID</td>
+            <td th:text="#{todoForm.id}">ID</td>
             <td th:text="${todoForm.id}">
             </td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.title.name}">タイトル</td>
+            <td th:text="#{todoForm.title}">タイトル</td>
             <td><input type="text" th:field="*{title}" /></td>
             <td th:if="${#fields.hasErrors('title')}" th:errors="*{title}">タイトルの入力に誤りがあります</td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.content.name}">詳細</td>
+            <td th:text="#{todoForm.content}">詳細</td>
             <td><textarea cols="80" rows="7" th:field="*{content}"></textarea></td>
             <td th:if="${#fields.hasErrors('content')}" th:errors="*{content}"></td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.createdDateTime.name}">作成日時</td>
+            <td th:text="#{todoForm.createdDateTime}">作成日時</td>
             <td th:text="${#dates.format(todoForm.createdDateTime, 'yyyy/MM/dd HH:mm')}"></td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.updatedDateTime.name}">更新日時</td>
+            <td th:text="#{todoForm.updatedDateTime}">更新日時</td>
             <td th:text="${#dates.format(todoForm.updatedDateTime, 'yyyy/MM/dd HH:mm')}"></td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.completed.name}">完了</td>
+            <td th:text="#{todoForm.completed}">完了</td>
             <td><input type="checkbox" th:field="*{completed}" /> </td>
         </tr>
         <tr>
-            <td th:text="#{todo.field.archived.name}">アーカイブ済</td>
+            <td th:text="#{todoForm.archived}">アーカイブ済</td>
             <td><input type="checkbox" th:field="*{archived}" /></td>
         </tr>
         <tr>

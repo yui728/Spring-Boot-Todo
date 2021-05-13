@@ -8,11 +8,11 @@
         <table>
             <tr>
                 <th th:text="#{todo.list.Number}">No.</th>
-                <th th:text="#{todo.field.title.name}">名前</th>
-                <th th:text="#{todo.field.createdDateTime.name}">作成日時</th>
-                <th th:text="#{todo.field.updatedDateTime.name}">更新日時</th>
-                <th th:text="#{todo.field.completed.name}">完了</th>
-                <th th:text="#{todo.field.archived.name}">アーカイブ</th>
+                <th th:text="#{todoForm.title}">名前</th>
+                <th th:text="#{todoForm.createdDateTime}">作成日時</th>
+                <th th:text="#{todoForm.updatedDateTime}">更新日時</th>
+                <th th:text="#{todoForm.completed}">完了</th>
+                <th th:text="#{todoForm.archived}">アーカイブ</th>
             </tr>
             <tr th:each="todo,iterStat : ${todoList}">
                 <td th:text="${iterStat.count}"></td>
