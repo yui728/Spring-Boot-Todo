@@ -173,15 +173,15 @@ public class TodoControllerTest {
                 .andExpect(model().attribute("todoForm", hasProperty("archived", is(todo.getArchived()))));
     }
 
-//    @Test
-//    public void postEditTodoPageTest() throws Exception {
-//        String title = "Test Title";
-//        String content = TestUtility.repeatString("B", OVERSIZE_CONTENT_LENGTH, "Test Content");
-//        MockHttpServletRequestBuilder  createMessage =  post("/todo/edit/")
-//                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-//                .param("title", title)
-//                .param("content", content);
-//    }
+    @Test
+    public void showEditPageNotFoundTodoTest() throws Exception {
+        MockHttpServletRequestBuilder  request =  get("/todo/edit/1/");
+        Optional<Todo> serviceResult = Optional.empty();
+
+        when(service.findById(1)).thenReturn(serviceResult);
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+    }
 
     private Todo createDummyTodo(int id) {
         Todo result = new Todo();
