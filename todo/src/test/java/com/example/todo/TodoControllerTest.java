@@ -1,12 +1,12 @@
 package com.example.todo;
 
+import com.example.todo.contoller.TodoEditForm;
 import com.example.todo.contoller.TodoForm;
 import com.example.todo.model.Todo;
 import com.example.todo.service.TodoService;
-import jdk.vm.ci.meta.Local;
-import org.hamcrest.core.Is;
 import org.hamcrest.core.IsInstanceOf;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -14,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -23,7 +22,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.hamcrest.Matchers.*;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -181,6 +181,379 @@ public class TodoControllerTest {
         when(service.findById(1)).thenReturn(serviceResult);
         this.mockMvc.perform(request)
                 .andExpect(redirectedUrl("/todo/"));
+    }
+
+    @Test
+    public void postEditPageCompleteUpdateTodoTest() throws Exception {
+        String title = "Updated Test Title";
+        String content = "Updated Test content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        when(service.existTodo(1)).thenReturn(true);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<TodoEditForm> formArgumentCaptor = ArgumentCaptor.forClass(TodoEditForm.class);
+        // メソッド呼出回数の確認と引数のキャプチャ
+        verify(service, times(1)).existTodo(idArgumentCaptor.capture());
+        verify(service, times(1)).update(formArgumentCaptor.capture());
+        // 呼び出し時の引数の確認
+        assertEquals(1, idArgumentCaptor.getValue());
+        TodoEditForm captoredFormValue = formArgumentCaptor.getValue();
+        assertEquals(1, captoredFormValue.getId());
+        assertEquals(title, captoredFormValue.getTitle());
+        assertEquals(content, captoredFormValue.getContent());
+        assertEquals(false, captoredFormValue.getArchived());
+        assertEquals(false, captoredFormValue.getCompleted());
+
+    }
+
+    @Test
+    public void postEditPageNotExistTodoTest() throws Exception {
+        String title = "Updated Test Title";
+        String content = "Updated Test content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        when(service.existTodo(1)).thenReturn(false);
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attribute("message", "更新対象のTodoが存在しません。"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        // メソッド呼出回数の確認と引数のキャプチャ
+        verify(service, times(1)).existTodo(idArgumentCaptor.capture());
+        verify(service, never()).update(any());
+        // 実行時の引数チェック
+        assertEquals(1, idArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void postEditPageNotExistTodoOnUpdateTest() throws Exception {
+        String title = "Updated Test Title";
+        String content = "Updated Test content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        when(service.existTodo(1)).thenReturn(true);
+        when(service.update(any())).thenThrow(NotFoundException.class);
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attribute("message", "更新対象のTodoが存在しません。"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<TodoEditForm> editFormArgumentCaptor = ArgumentCaptor.forClass(TodoEditForm.class);
+        // メソッド呼出回数の確認と引数のキャプチャ
+        verify(service, times(1)).existTodo(idArgumentCaptor.capture());
+        verify(service, times(1)).update(editFormArgumentCaptor.capture());
+        // 実行時の引数チェック
+        assertEquals(1, idArgumentCaptor.getValue());
+        TodoEditForm captoredTodoEditForm = editFormArgumentCaptor.getValue();
+        assertEquals(1, captoredTodoEditForm.getId());
+        assertEquals(title, captoredTodoEditForm.getTitle());
+        assertEquals(content, captoredTodoEditForm.getContent());
+        assertEquals(false, captoredTodoEditForm.getCompleted());
+        assertEquals(false, captoredTodoEditForm.getArchived());
+    }
+
+    @Test
+    public void postEditPageTitleValidationOverLengthErrorTest() throws Exception {
+        String title = TestUtility.repeatString("A", OVERSIZE_TITLE_LENGTH, "Updated Test Title");
+        String content = "Updated Test content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "title"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageTitleValidationNoInputErrorTest() throws Exception {
+        String title = "";
+        String content = "Updated Test content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "title"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageContentValidationOverLengthErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = TestUtility.repeatString("A", OVERSIZE_CONTENT_LENGTH, "Updated Test content ");
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "content"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageContentValidationNoInputErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "content"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageCompletedNotBooleanErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", "AAA")
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "completed"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", nullValue())))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageCompletedNoInputErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", "")
+                .param("archived", String.valueOf(false));
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "completed"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", nullValue())))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", is(false))));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageCompletedTrueTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(true))
+                .param("archived", String.valueOf(false));
+
+        when(service.existTodo(1)).thenReturn(true);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<TodoEditForm> editFormArgumentCaptor = ArgumentCaptor.forClass(TodoEditForm.class);
+        // メソッド呼出回数の確認と引数のキャプチャ
+        verify(service, times(1)).existTodo(idArgumentCaptor.capture());
+        verify(service, times(1)).update(editFormArgumentCaptor.capture());
+        // 実行時の引数チェック
+        assertEquals(1, idArgumentCaptor.getValue());
+        TodoEditForm captoredTodoEditForm = editFormArgumentCaptor.getValue();
+        assertEquals(1, captoredTodoEditForm.getId());
+        assertEquals(title, captoredTodoEditForm.getTitle());
+        assertEquals(content, captoredTodoEditForm.getContent());
+        assertEquals(true, captoredTodoEditForm.getCompleted());
+        assertEquals(false, captoredTodoEditForm.getArchived());
+    }
+
+    @Test
+    public void postEditPageArchivedNotBooleanErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", "BBB");
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "archived"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", nullValue())));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageArchivedNoInputErrorTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", "");
+
+        this.mockMvc.perform(request)
+                .andExpect(view().name("edit"))
+                .andExpect(model().attributeHasErrors("todoForm"))
+                .andExpect(model().attributeHasFieldErrors("todoForm", "archived"))
+                .andExpect(model().attribute("todoForm", hasProperty("id", is(1))))
+                .andExpect(model().attribute("todoForm", hasProperty("title", is(title))))
+                .andExpect(model().attribute("todoForm", hasProperty("content", is(content))))
+                .andExpect(model().attribute("todoForm", hasProperty("completed", is(false))))
+                .andExpect(model().attribute("todoForm", hasProperty("archived", nullValue())));
+
+        // メソッド呼出回数の確認
+        verify(service, never()).existTodo(anyInt());
+        verify(service, never()).update(any());
+    }
+
+    @Test
+    public void postEditPageArchivedTrueTest() throws Exception {
+        String title = "Updated Test title";
+        String content = "Updated Test Content";
+        MockHttpServletRequestBuilder  request =  post("/todo/edit")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                .param("id", String.valueOf(1))
+                .param("title", title)
+                .param("content", content)
+                .param("completed", String.valueOf(false))
+                .param("archived", String.valueOf(true));
+
+        when(service.existTodo(1)).thenReturn(true);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        ArgumentCaptor<TodoEditForm> editFormArgumentCaptor = ArgumentCaptor.forClass(TodoEditForm.class);
+        // メソッド呼出回数の確認と引数のキャプチャ
+        verify(service, times(1)).existTodo(idArgumentCaptor.capture());
+        verify(service, times(1)).update(editFormArgumentCaptor.capture());
+        // 実行時の引数チェック
+        assertEquals(1, idArgumentCaptor.getValue());
+        TodoEditForm captoredTodoEditForm = editFormArgumentCaptor.getValue();
+        assertEquals(1, captoredTodoEditForm.getId());
+        assertEquals(title, captoredTodoEditForm.getTitle());
+        assertEquals(content, captoredTodoEditForm.getContent());
+        assertEquals(false, captoredTodoEditForm.getCompleted());
+        assertEquals(true, captoredTodoEditForm.getArchived());
     }
 
     private Todo createDummyTodo(int id) {
