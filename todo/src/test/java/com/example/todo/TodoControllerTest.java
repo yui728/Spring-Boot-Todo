@@ -556,6 +556,45 @@ public class TodoControllerTest {
         assertEquals(true, captoredTodoEditForm.getArchived());
     }
 
+    @Test
+    public void postArchiveTodoProcessTest() throws Exception {
+        MockHttpServletRequestBuilder  request =  post("/todo/archive/1/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(service, times(1)).archiveTodo(idArgumentCaptor.capture());
+        assertEquals(1, idArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void postUnArchivedTodoProcessTest() throws Exception {
+        MockHttpServletRequestBuilder  request =  post("/todo/unarchive/1/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(service, times(1)).unarchiveTodo(idArgumentCaptor.capture());
+        assertEquals(1, idArgumentCaptor.getValue());
+    }
+
+    @Test
+    public void postDeleteTodoProcessTest() throws Exception {
+        MockHttpServletRequestBuilder  request =  post("/todo/delete/1/")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+        this.mockMvc.perform(request)
+                .andExpect(redirectedUrl("/todo/"));
+
+        ArgumentCaptor<Integer> idArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(service, times(1)).deleteTodo(idArgumentCaptor.capture());
+        assertEquals(1, idArgumentCaptor.getValue());
+    }
+
     private Todo createDummyTodo(int id) {
         Todo result = new Todo();
         result.setId(id);
