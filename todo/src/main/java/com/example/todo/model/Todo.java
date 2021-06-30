@@ -17,9 +17,11 @@ public class Todo {
     private String content;
 
     @Column(nullable=false)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date createdDateTime;
 
     @Column(nullable=true)
+    @Temporal(value = TemporalType.TIMESTAMP)
     private Date updatedDateTime;
 
     @Column(nullable=false)
