@@ -8,7 +8,8 @@ import com.example.todo.model.TodoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Optional;
 
@@ -31,8 +32,10 @@ public class TodoService {
         todo.setContent(form.getContent());
         todo.setArchived(false);
         todo.setCompleted(false);
-        todo.setCreatedDateTime(new Date());
-        todo.setUpdatedDateTime(new Date());
+        LocalDateTime ldt = LocalDateTime.now();
+        Date nowDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        todo.setCreatedDateTime(nowDate);
+        todo.setUpdatedDateTime(nowDate);
 
         return repository.save(todo);
     }
@@ -50,7 +53,9 @@ public class TodoService {
         updateData.setContent(form.getContent());
         updateData.setArchived(form.getArchived());
         updateData.setCompleted(form.getCompleted());
-        updateData.setUpdatedDateTime(new Date());
+        LocalDateTime ldt = LocalDateTime.now();
+        Date nowDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        updateData.setUpdatedDateTime(nowDate);
 
         return repository.save(updateData);
     }
@@ -104,7 +109,9 @@ public class TodoService {
         }
 
         todo.setArchived(archived);
-        todo.setUpdatedDateTime(new Date());
+        LocalDateTime ldt = LocalDateTime.now();
+        Date nowDate = Date.from(ldt.atZone(ZoneId.systemDefault()).toInstant());
+        todo.setUpdatedDateTime(nowDate);
         repository.save(todo);
 
     }
