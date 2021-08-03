@@ -486,4 +486,14 @@ public class TodoServiceTests {
         verify(repository, never()).save(any(Todo.class));
     }
 
+    @Test
+    @DisplayName("Todoの削除処理のテスト")
+    public void deleteTodoTest() throws Exception {
+        service.deleteTodo(1);
+
+        // 呼び出し回数と実行時引数のチェック
+        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(repository, times(1)).deleteById(argumentCaptor.capture());
+        assertEquals(1, argumentCaptor.getValue());
+    }
 }
