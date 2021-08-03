@@ -290,6 +290,55 @@ public class TodoServiceTests {
     }
 
     @Test
+    @DisplayName("アーカイブ時に対象のTodoがすでにアーカイブ済の場合")
+    public void archivedTodoAlreadyArchivedTest() throws Exception {
+        Todo presentTodo = new Todo();
+        presentTodo.setId(1);
+        presentTodo.setTitle("Todo Title");
+        presentTodo.setContent("Todo Content");
+        presentTodo.setArchived(true);
+        presentTodo.setCompleted(false);
+        presentTodo.setCreatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        1,
+                                        12,
+                                        30,
+                                        0)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        presentTodo.setUpdatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        2,
+                                        11,
+                                        25,
+                                        30)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        // findByIdでTodoが存在するようにする
+        when(repository.findById(1)).thenReturn(Optional.of(presentTodo));
+
+        // テスト対象のメソッド呼び出し
+        service.archiveTodo(1);
+
+        // 呼び出し回数と実行時引数のチェック
+        ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(repository, times(1)).findById(integerArgumentCaptor.capture());
+        assertEquals(1, integerArgumentCaptor.getValue());
+        verify(repository, never()).save(any(Todo.class));
+
+    }
+
+    @Test
     @DisplayName("アーカイブ時に該当するTodoが存在しない場合")
     public void archivedTodoNotPresentTest() throws Exception {
         // findByIdでTodoが存在しないようにする
@@ -303,4 +352,138 @@ public class TodoServiceTests {
         assertEquals(1, argumentCaptor.getValue());
         verify(repository, never()).save(any(Todo.class));
     }
+
+    @Test
+    @DisplayName("アーカイブ解除処理が成功する場合")
+    public void unArchivedTodoCompleteTest() throws Exception {
+        Todo presentTodo = new Todo();
+        presentTodo.setId(1);
+        presentTodo.setTitle("Todo Title");
+        presentTodo.setContent("Todo Content");
+        presentTodo.setArchived(true);
+        presentTodo.setCompleted(false);
+        presentTodo.setCreatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        1,
+                                        12,
+                                        30,
+                                        0)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        presentTodo.setUpdatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        2,
+                                        11,
+                                        25,
+                                        30)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        // findByIdでTodoが存在するようにする
+        when(repository.findById(1)).thenReturn(Optional.of(presentTodo));
+
+        // モックしたときの戻り値用のLocalDateTime、判定用のDateオブジェクトをあらかじめ作っておく
+        LocalDateTime localDateTime = LocalDateTime.of(2021, 7, 20, 6, 30, 40);
+        Date expectDate = Date.from(LocalDateTime.of(2021, 7, 20, 6, 30, 40).atZone(ZoneId.systemDefault()).toInstant());
+
+        // 更新日時のモックのため、LocalDateTimeをインラインモックする
+        try(MockedStatic<LocalDateTime> localDateTimeMockedStatic = mockStatic(LocalDateTime.class)) {
+            // LocalDateTime.nowの戻り値を設定する
+            localDateTimeMockedStatic.when(LocalDateTime::now).thenReturn(localDateTime);
+
+            // repositoryのメソッドをMockする
+            when(repository.save(any(Todo.class))).thenReturn(new Todo());
+
+            service.unarchiveTodo(1);
+
+            // 呼び出し回数と実行時引数のチェック
+            ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+            verify(repository, times(1)).findById(integerArgumentCaptor.capture());
+            assertEquals(1, integerArgumentCaptor.getValue());
+            ArgumentCaptor<Todo> todoArgumentCaptor = ArgumentCaptor.forClass(Todo.class);
+            verify(repository, times(1)).save(todoArgumentCaptor.capture());
+            Todo catptoredTodo = todoArgumentCaptor.getValue();
+            assertEquals(1, catptoredTodo.getId());
+            assertEquals("Todo Title", catptoredTodo.getTitle());
+            assertEquals("Todo Content", catptoredTodo.getContent());
+            assertFalse(catptoredTodo.getArchived());
+            assertFalse(catptoredTodo.getCompleted());
+            assertEquals(presentTodo.getCreatedDateTime(), catptoredTodo.getCreatedDateTime());
+            assertEquals(expectDate, catptoredTodo.getUpdatedDateTime());
+        }
+    }
+
+    @Test
+    @DisplayName("アーカイブ解除時に対象のTodoがすでにアーカイブ解除済の場合")
+    public void unArchivedTodoAlreadyArchivedTest() throws Exception {
+        Todo presentTodo = new Todo();
+        presentTodo.setId(1);
+        presentTodo.setTitle("Todo Title");
+        presentTodo.setContent("Todo Content");
+        presentTodo.setArchived(false);
+        presentTodo.setCompleted(false);
+        presentTodo.setCreatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        1,
+                                        12,
+                                        30,
+                                        0)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        presentTodo.setUpdatedDateTime(
+                Date.from(
+                        LocalDateTime.of(
+                                        2021,
+                                        1,
+                                        2,
+                                        11,
+                                        25,
+                                        30)
+                                .atZone(
+                                        ZoneId.systemDefault())
+                                .toInstant())
+        );
+        // findByIdでTodoが存在するようにする
+        when(repository.findById(1)).thenReturn(Optional.of(presentTodo));
+
+        // テスト対象のメソッド呼び出し
+        service.unarchiveTodo(1);
+
+        // 呼び出し回数と実行時引数のチェック
+        ArgumentCaptor<Integer> integerArgumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(repository, times(1)).findById(integerArgumentCaptor.capture());
+        assertEquals(1, integerArgumentCaptor.getValue());
+        verify(repository, never()).save(any(Todo.class));
+
+    }
+
+    @Test
+    @DisplayName("アーカイブ解除時に該当するTodoが存在しない場合")
+    public void unArchivedTodoNotPresentTest() throws Exception {
+        // findByIdでTodoが存在しないようにする
+        when(repository.findById(1)).thenReturn(Optional.empty());
+
+        service.unarchiveTodo(1);
+
+        // 呼び出し回数と実行時引数のチェック
+        ArgumentCaptor<Integer> argumentCaptor = ArgumentCaptor.forClass(Integer.class);
+        verify(repository, times(1)).findById(argumentCaptor.capture());
+        assertEquals(1, argumentCaptor.getValue());
+        verify(repository, never()).save(any(Todo.class));
+    }
+
 }
